@@ -2,13 +2,23 @@
   "name": "lr-ruler",
   "version": "0.1.0",
   "private": false,
-  "main": "lib/lr-ruler.umd.js",
+  "license": "MIT",
+  "main": "dist/lr-ruler.umd.js",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name lr-ruler  --entry ./packages/index.js",
+    "build": "vue-cli-service build --target lib --name lr-ruler  packages/index.js",
     "build:app": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
+  "keywords": [
+    "lr-ruler",
+    "ruler"
+  ],
   "dependencies": {
     "better-scroll": "^2.5.0",
     "core-js": "^3.8.3",
