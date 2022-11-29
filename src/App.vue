@@ -1,28 +1,30 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <lr-ruler
+        @post-NumValue="handleWeight" 
+        :NowNum="60" 
+        :maxNum="80" 
+        :minNum="20" 
+        :numSize="40"
+        :pointerColor="'#52D2CA'" 
+        class="rules-msg"
+      ></lr-ruler>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import LrRuler from 'lr-ruler';
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  components: { LrRuler },
+  methods: {
+    handleWeight(msg) {
+      console.log(msg)//该值打印的就是你改变刻度尺的值
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
