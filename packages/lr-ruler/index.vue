@@ -1,40 +1,42 @@
+<!--
+ * @Author: lafite.rao 827943653@qq.com
+ * @Date: 2022-11-28 22:57:36
+ * @LastEditors: lafite.rao 827943653@qq.com
+ * @LastEditTime: 2022-12-04 23:20:14
+ * @FilePath: \lr-ruler\packages\lr-ruler\index.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div>
     <div class="cs-rule" ref="rulepage">
       <!--刻度表-->
       <div class="cs-scrollrule" ref="scrollrule">
-        <ul class="cs-scrollrule-hook" ref="rulehook">
+        <div class="cs-scrollrule-hook" ref="rulehook">
           <!--0刻度前的空白-->
           <div class="cs-rule-null">
-            <li v-for="(item, index) in zeroList" class="cs-scroll-item" :key="index"></li>
+            <div v-for="(item, index) in zeroList" class="cs-scroll-item" :key="index"></div>
           </div>
           <!--正常刻度表-->
-          <li v-for="(item, index) in counter" :key="index" class="cs-scroll-item">
-            <template v-if="index % 5 == 0">
-              <div v-if="ispoint" class="cs-scroll-item-num">{{ (index + minNum) / 10 }}周岁</div>
+          <div v-for="(item, index) in counter" :key="index" class="cs-scroll-item">
+            <template v-if="index % graduation == 0">
+              <div v-if="ispoint" class="cs-scroll-item-num">{{ (index + minNum) / 10 }}{{typeName}}</div>
               <div v-else class="cs-scroll-item-num" :style="{ '--num-age': (index + minNum) * oneGridValue }">{{ (index
                   + minNum) * oneGridValue
-              }}周岁</div>
+              }}{{typeName}}</div>
               <div class="cs-scroll-item-rule vux-1px-l cs-scale-half"></div>
             </template>
-            <!-- <template v-else-if="index % 5 == 0">
-                  <div class="cs-scroll-item-rule vux-1px-l cs-scale-half"></div>
-                </template> -->
             <template v-else>
               <div class="cs-scroll-item-rule vux-1px-l cs-scale-one"></div>
             </template>
-          </li>
-
+          </div>
           <!-- 最大刻度后面的空白 -->
           <div class="cs-rule-null-after">
-            <li v-for="(item, index) in aletrList" class="cs-scroll-item" :key="index"></li>
+            <div v-for="(item, index) in aletrList" class="cs-scroll-item" :key="index"></div>
           </div>
-
-        </ul>
+        </div>
       </div>
       <!--刻度表的针-->
       <div class="cs-scroll-item-pointer"></div>
-
     </div>
   </div>
 </template>
@@ -83,6 +85,26 @@ export default {
     oneGridValue: {
       type: Number,
       default: 1
+    },
+    // 是否展示文字
+    typeName: {
+      type: String,
+      default: ''
+    },
+    // 刻度分度
+    graduation: {
+      type: Number,
+      default: 5
+    },
+    // ruler的高度
+    rulerHeight: {
+      type: [String, Number],
+      default: 120
+    },
+    // 文字变色范围
+    colorRange: {
+      type: Number,
+      default: 10
     }
   },
   data() {
@@ -93,8 +115,10 @@ export default {
       zeroList: this.ruleWidth / 2,
       // 刻度结束后的空白
       aletrList: this.ruleWidth / 2 - 1,
+      curNumValue: '',  // 当前滑动到的刻度
     }
   },
+
   methods: {
     // 全局初始化
     init() {
@@ -122,13 +146,16 @@ export default {
       // 监听滚动
       this.scrollrule.on('scroll', (pos) => {
         this.scrollX = Math.abs(Math.round(pos.x))
+        // 滑动到的刻度值
         let NumValue = Math.abs(Math.round(this.scrollX / this.oneWidth)) + this.minNum
         docStyle.setProperty('--num-age-cur', NumValue * this.oneGridValue)
         // 判断是否开启小数
         if (this.ispoint) {
           this.$emit('post-NumValue', NumValue / 10 * this.oneGridValue)
+          this.curNumValue = NumValue/10 * this.oneGridValue
         } else {
           this.$emit('post-NumValue', NumValue * this.oneGridValue)
+          this.curNumValue = NumValue * this.oneGridValue
         }
       })
 
@@ -139,7 +166,7 @@ export default {
         //计算距离下一个刻度的差值
         let vul = this.oneWidth - littleNum;
         // 加入差值比较大,再进行吸附,大于一半的距离,就往右边吸附差值的距离,小于一半的距离,就往左边吸附滑动的距离
-        if (vul > 0.5 && vul < (this.oneWidth - 0.5)) {
+        if (vul > 0.2 && vul < (this.oneWidth - 0.2)) {
           if (littleNum > (this.oneWidth / 2)) {
             this.scrollrule.scrollBy(-vul, 0, 0)
           } else {
@@ -171,6 +198,10 @@ export default {
       docStyle.setProperty('--num-size', this.numSize);
       // 刻度尺宽度
       docStyle.setProperty('--rule-width', this.ruleWidth);
+      // 刻度尺高度
+      docStyle.setProperty('--ruler-height', this.rulerHeight)
+      // 文字颜色范围
+      docStyle.setProperty('--color-range', this.colorRange)
 
     },
     // 暴露给父级,如果后期需要修改某些参数,需要重新初始化一下组件
@@ -267,6 +298,7 @@ export default {
 .vux-1px-l,
 .vux-1px-r {
   position: relative;
+
 }
 
 .vux-1px {
@@ -320,7 +352,7 @@ export default {
 .cs-rule {
   position: relative;
   width: 100vw;
-  height: calc(260 / 750 * 100vw);
+  /* height: calc(260 / 750 * 100vw); */
   overflow: hidden;
   --pointer-color: rgb(97, 206, 81);
   --rule-width: 40;
@@ -328,7 +360,7 @@ export default {
 }
 
 .cs-scrollrule {
-  height: calc(200 / 750 * 100vw);
+  height: calc(var(--ruler-height) / 750 * 100vw);
 }
 
 .cs-scrollrule-hook {
@@ -346,6 +378,7 @@ export default {
   width: calc(100vw / var(--rule-width));
   text-align: center;
   vertical-align: baseline;
+
 }
 
 /*刻度表数字*/
@@ -355,7 +388,7 @@ export default {
   margin-bottom: calc(12 / 750 * 100vw);
   text-align: center;
   font-size: calc(24 / 750 * 100vw);
-  --s: max(10%, (10 - max(var(--num-age-cur) - var(--num-age), var(--num-age) - var(--num-age-cur)))*100%);
+  --s: max(10%, (var(--color-range) - max(var(--num-age-cur) - var(--num-age), var(--num-age) - var(--num-age-cur)))*100%);
   /*>100*/
   color: rgba(0, 0, 0, var(--s));
 }
@@ -365,9 +398,9 @@ export default {
 .cs-scroll-item-pointer {
   position: absolute;
   top:calc(2 / 750 * 100vw);
-  left: 50% ;  
+  left: calc(50% + (4 / 750 * 100vw));  
   height: calc(110 / 750 * 100vw);
-  transform: translate(calc(-50% + (2 / 750 * 100vw)), 0);
+  transform: translate(calc(-50% - (2 / 750 * 100vw)), 0);
   width: calc(4 / 750 * 100vw);
   background: var(--pointer-color);
 
@@ -390,9 +423,6 @@ export default {
   box-sizing: border-box;
 }
 
-.vux-1px-l[data-v-db07d170]:before {
-  border-color: #000000 !important;
-}
 
 .vux-1px-l:before {
   border-color: #000000 !important;
