@@ -2,14 +2,14 @@
  * @Author: lafite.rao 827943653@qq.com
  * @Date: 2022-11-27 22:56:12
  * @LastEditors: lafite.rao 827943653@qq.com
- * @LastEditTime: 2023-04-11 14:18:21
+ * @LastEditTime: 2023-04-11 14:28:52
  * @FilePath: \lr-ruler\README.md
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 # lr-ruler
 
-# 图片演示
-![lr-ruler](./imgs/ruler.gif)
+### 图片演示
+![ruler.gif](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cbc4b13d5c4142c3a1deccf71bb124f4~tplv-k3u1fbpfcp-watermark.image?)
 
 
 | 参数 | 说明 |  类型 | 默认值 |
